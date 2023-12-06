@@ -8,8 +8,7 @@ class TextGenerator:
     def __init__(
         self, 
         model_name: str = "gpt-3.5-turbo", 
-        api_key: str = None,
-        config: dict = None
+        api_key: str = None
     ):
         api_key = os.environ.get("OPENAI_API_KEY") or None
         if api_key is None:
