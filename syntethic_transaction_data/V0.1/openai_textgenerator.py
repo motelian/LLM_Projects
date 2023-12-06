@@ -17,8 +17,17 @@ class TextGenerator:
                 "OpenAI API key is not set. Please set the OPENAI_API_KEY environment variable."
             )
         openai.api_key = api_key
-        self.model_name = model_name or None       
-        self.config = {
+        self.model_name = model_name or None 
+
+
+    def generate(
+            self, 
+            messages: Union[List[dict],str],
+            config: Optional[dict],
+    ) ->  LLMResponse:
+        
+        # default openai configs
+        openai_config = {
             "n": config.get("n", 1),
             "temperature": config.get("temperature", 0),
             "max_tokens": config.get("max_tokens", 4096),
@@ -26,15 +35,10 @@ class TextGenerator:
             "frequency_penalty": config.get("frequency_penalty", 0),
             "presence_penalty": config.get("presence_penalty", 0),
         }
-
-    def generate(
-            self, 
-            messages: Union[List[dict],str]
-    ) ->  LLMResponse:
         
         # TODO: add cache capability
 
-        llm_response = openai.ChatCompletion.create(messages=messages, model = self.model_name, **self.config)
+        llm_response = openai.ChatCompletion.create(messages=messages, model = self.model_name, **openai_config)
         response = LLMResponse(
             text = [Message(**x.message) for x in llm_response.choices],
             config = self.config,
