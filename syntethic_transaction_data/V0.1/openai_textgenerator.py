@@ -41,7 +41,7 @@ class TextGenerator:
         llm_response = openai.ChatCompletion.create(messages=messages, model = self.model_name, **openai_config)
         response = LLMResponse(
             text = [Message(**x.message) for x in llm_response.choices],
-            config = self.config,
+            config = openai_config
             usage = dict(llm_response.usage)
         )
 
