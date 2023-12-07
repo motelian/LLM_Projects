@@ -3,8 +3,7 @@ import logging
 from typing import Union
 import pandas as pd
 from utils import clean_code_snippet, read_dataframe
-#from lida.datamodel import TextGenerationConfig
-from openai_textgenerator import TextGenerator
+from openai_textgen import TextGenerator
 import warnings
 
 system_prompt = """
@@ -95,12 +94,9 @@ class Summarizer():
 
         messages = [
             {"role": "system", "content": system_prompt},
-            {"role": "assistant", "content": f"""
-        Annotate the dictionary below. Only return a JSON object.
-        {base_summary}
-        """},
+            {"role": "assistant", "content": f"""Annotate the dictionary below. Only return a JSON object. \n {base_summary}"""},
         ]
-
+        
         response = text_gen.generate(messages=messages, config=textgen_config)
         enriched_summary = base_summary
         try:
