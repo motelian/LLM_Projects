@@ -43,6 +43,7 @@ class TextGenerator:
 
         try:
             llm_response = openai.ChatCompletion.create(messages=messages, model = self.model_name, **openai_config)
+            # print(llm_response)
 
         except openai.error.AuthenticationError:
             print("Authentication failed. Check your API key.")

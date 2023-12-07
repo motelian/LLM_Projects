@@ -1,5 +1,6 @@
 from pydantic.dataclasses import dataclass
 from typing import List, Optional, Any
+import base64
 
 
 @dataclass
@@ -85,3 +86,28 @@ class Summary:
 
 {field_lines}
 """
+
+
+@dataclass
+class ChartExecutorResponse:
+    """Response from a visualization execution"""
+
+    status: bool  # True if successful
+    raster: Optional[str]  # base64 encoded image
+    code: str  # code used to generate the visualization
+    library: str  # library used to generate the visualization
+    error: Optional[dict] = None  # error message if status is False
+
+    def _repr_mimebundle_(self, include=None, exclude=None):
+        bundle = {"text/plain": self.code}
+        if self.raster is not None:
+            bundle["image/png"] = self.raster
+        return bundle
+
+    def savefig(self, path):
+        """Save the raster image to a specified path if it exists"""
+        if self.raster:
+            with open(path, 'wb') as f:
+                f.write(base64.b64decode(self.raster))
+        else:
+            raise FileNotFoundError("No raster image to save")
