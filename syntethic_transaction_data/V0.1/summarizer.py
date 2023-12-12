@@ -111,7 +111,9 @@ class Summarizer():
 
     def summarize(
             self, data: Union[pd.DataFrame, str],
-            text_gen: TextGenerator, file_name="", n_samples: int = 3,
+            text_gen: TextGenerator, 
+            file_name="", 
+            n_samples: int = 3,
             textgen_config: dict = {"n":1},
             summary_method: str = "default") -> dict:
         """Summarize data from a pandas DataFrame or a file location"""
