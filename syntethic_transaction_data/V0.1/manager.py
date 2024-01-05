@@ -108,7 +108,7 @@ class Manager:
         if isinstance(goal, str): 
             goal = Goal(question=goal, visualization=goal, rationale="")
         
-        return self.evaluator.generate(code=code, goal=goal, textgen_config=textgen_config, summary=summary, text_gen=textgen_config, library=library)
+        return self.evaluator.generate(code=code, goal=goal, textgen_config=textgen_config, summary=summary, text_gen=self.text_gen, library=library)
 
     
 
