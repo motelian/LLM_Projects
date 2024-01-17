@@ -101,8 +101,10 @@ for couple in range(num_couples):
         mapping_id += 1
 
 # Show the generated data
-client_df.head()
-
+client_df.to_csv('clients.csv', index=False)
+node_df.to_csv('client_node_mapping.csv', index=False)
+rel_df.to_csv('relationship.csv', index=False)
+print("Success!")
 
 
 

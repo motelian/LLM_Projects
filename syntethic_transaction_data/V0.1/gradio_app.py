@@ -11,6 +11,7 @@ text_gen = TextGenerator()
 
 base_path = '/Volumes/develop/LLM_Projects/syntethic_transaction_data/data/'
 xlsx_files = [f for f in os.listdir(base_path) if f.endswith('.xlsx')]
+eval_report = None
 
 def hide_fn():
     return gr.Textbox(visible=False)
@@ -110,14 +111,83 @@ def vizgen(name: str, question: str):
     # generate plot 
     charts = nlviz.visualize(summary=summary, goal=question, textgen_config=llm_config, return_error=True)
     chart = charts[0]
+    print("\n\n ******")
+    print(chart.status)
+    print("\n\n ******")
     if not chart.status:
         print(chart.error)
         return chart.error
     
+
+    # evaluate the code
+    global eval_report 
+    eval_report = nlviz.evaluate(code=chart.code, 
+        goal=Goal(question=question, visualization=question ,rationale=""), 
+        summary=summary,
+        textgen_config=llm_config
+    )
+
     # save image
     img_path = save_image(chart=chart, client_name=name, chart_title=question)
 
     return img_path, chart.code, Summary(**summary)
+
+
+
+
+def eval():
+    global eval_report 
+    if eval_report is None:
+        return None
+
+    dimensions = eval_report[0]
+
+    star_rating_html = """
+    <!DOCTYPE html>
+    <html>
+    <head>
+    <!-- Font Awesome Icon Library -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+    .fa-star, .fa-star-half-o, .fa-star-o {{
+        color: orange;
+    }}
+    .rating-category {{
+        font-weight: bold;
+    }}
+    .rationale {{
+        margin-left: 20px;
+        font-style: italic;
+    }}
+    </style>
+    </head>
+    <body>
+
+    <h2>Dimension Ratings and Rationale</h2>
+    """
+
+    for metric in dimensions:
+        name = metric['dimension']
+        rating = metric['score']
+        rationale = metric['rationale']
+
+        star_rating_html += '<div class="rating-category">{}: {}/5</div>'.format(name, rating)
+        for i in range(1, 6):
+            if i <= rating:
+                star_rating_html += '<span class="fa fa-star"></span>'
+            elif i - 0.5 <= rating:
+                star_rating_html += '<span class="fa fa-star-half-o"></span>'
+            else:
+                star_rating_html += '<span class="fa fa-star-o"></span>'
+
+        star_rating_html += '<div class="rationale">Rationale:<br>{}</div><br>'.format(rationale)
+
+    star_rating_html += """
+    </body>
+    </html>
+    """
+    
+    return star_rating_html
 
 def create_interface():
 
@@ -156,11 +226,21 @@ def create_interface():
         with gr.Row():
             viz = gr.Image(type="filepath") #gr.Textbox()
             code = gr.Textbox(label="Python Code")
+        with gr.Accordion(open=False):
+            btn_eval = gr.Button("Evaluate")
+
+            rating_html = gr.HTML('Placeholder')
+            #gr.Label(value= {'bug': 0.09, 'transformation': 0.04, 'compliance': 0.06}, label='Evaluation Report')
+
+        a = eval()
+        print(a)
 
         hide_btn.click(hide_fn, outputs=[client_summary_text])
         show_btn.click(show_fn, outputs=[client_summary_text])
         client_selector.change(datasummary, inputs=[client_selector], outputs=[client_summary_text])
         btn.click(vizgen, inputs=[client_selector, prompt_text], outputs=[viz, code])
+        btn_eval.click(eval, outputs=[rating_html])
+
         # with gr.Row():
         #     for file_name in xlsx_files:
         #         gr.Button(file_name).click(fn=show_dataframe, inputs=["text"], outputs=[out_html])
