@@ -47,7 +47,7 @@ class ChartExecutor:
                         #     print("Warning: tight_layout encountered an error. The layout may not be optimal.")
                         #     pass
 
-                        plt.savefig(buf, format="png", dpi=100, pad_inches=3)
+                        plt.savefig(buf, format="png", dpi=200, pad_inches=0)
                         buf.seek(0)
                         # now the conent of the buffer is (containig the image data) are read and encoded into base64 format in text form which can be used stored or transmitted over the web
                         plot_data = base64.b64encode(buf.read()).decode("ascii")

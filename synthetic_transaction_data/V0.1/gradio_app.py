@@ -9,7 +9,7 @@ from datamodel import (Goal, ChartExecutorResponse, Summary)
 llm_config = {"n":1, 'max_tokens':2000, "temperature": 0}
 text_gen = TextGenerator()
 
-base_path = '/Volumes/develop/LLM_Projects/syntethic_transaction_data/data/'
+base_path = '/Volumes/develop/LLM_Projects/synthetic_transaction_data/data/'
 xlsx_files = [f for f in os.listdir(base_path) if f.endswith('.xlsx')]
 eval_report = None
 
