@@ -55,6 +55,8 @@ def datasummary(name: str):
     # create summary 
     summary = nlviz.summarize(textgen_config=llm_config, summary_method="default")
 
+
+    # 
     client_key = summary['fields'][0]['properties']['samples'][0]
     date_min = summary['fields'][2]['properties']['min']
     date_max = summary['fields'][2]['properties']['max']

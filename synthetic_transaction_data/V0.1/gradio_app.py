@@ -126,7 +126,8 @@ def vizgen(name: str, question: str):
         summary=summary,
         textgen_config=llm_config
     )
-
+    print(eval_report)
+    print(eval_report[0])
     # save image
     img_path = save_image(chart=chart, client_name=name, chart_title=question)
 
@@ -139,7 +140,7 @@ def eval():
     global eval_report 
     if eval_report is None:
         return None
-
+    
     dimensions = eval_report[0]
 
     star_rating_html = """
@@ -232,8 +233,8 @@ def create_interface():
             rating_html = gr.HTML('Placeholder')
             #gr.Label(value= {'bug': 0.09, 'transformation': 0.04, 'compliance': 0.06}, label='Evaluation Report')
 
-        a = eval()
-        print(a)
+        # a = eval()
+        # print(a)
 
         hide_btn.click(hide_fn, outputs=[client_summary_text])
         show_btn.click(show_fn, outputs=[client_summary_text])
